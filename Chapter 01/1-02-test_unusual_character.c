@@ -1,6 +1,6 @@
 #include <stdio.h>
 
 int main(void) {
-    printf("%c\n", '\b');
+    printf("%c\n", '\z');
     return 0;
 }
