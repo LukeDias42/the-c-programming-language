@@ -1,17 +1,17 @@
 #include <stdio.h>
 
 #define MAXSIZE 1000
-#define NOTENDED -1
 
 int getLine(char line[], int limit);
-int trimEnds(char line[]);
+int trimTrailing(char line[], int size);
 
 int main()
 {
     char line[MAXSIZE];
-    while (getLine(line, MAXSIZE) > 0) {
-        int end = trimEnds(line);
-        if (end != NOTENDED){
+    int size = 0;
+    while ((size = getLine(line, MAXSIZE)) > 0) {
+        size = trimTrailing(line, size);
+        if (size > 0) {
             printf("%s", line);
         }
     }
@@ -34,18 +34,14 @@ int getLine(char line[], int limit)
     return i;
 }
 
-int trimEnds(char line[])
+int trimTrailing(char line[], int size)
 {
-    int end = NOTENDED;
     int i;
-    for (i = 0; line[i] != '\n'; i++) {
-        if (line[i] != ' ' && line[i] != '\t') {
-            end = i;
-        }
-    }
-    line[++end] = '\n';
-    line[++end] = '\0';
-
-    return end;
+    for (i = size - 2; line[i] == '\t' || line[i] == ' '; i--)
+        ; 
+    line[++i] = '\n';
+    line[++i] = '\0';
+    
+    return i;
 }
 
