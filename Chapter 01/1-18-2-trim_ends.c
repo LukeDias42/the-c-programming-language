@@ -3,16 +3,18 @@
 #define MAXSIZE 1000
 #define IN 1
 #define OUT 0
-#define NOTSTARTED -1
+#define NOTFOUND -1
 
 int getLine(char line[], int limit);
-int trimEnds(char line[]);
+int trimEnds(char line[], int size);
+int isWhitespace(char c);
 
 int main()
 {
     char line[MAXSIZE];
-    while (getLine(line, MAXSIZE) > 0) {
-        int size = trimEnds(line);
+    int size;
+    while ((size = getLine(line, MAXSIZE)) > 0) {
+        size = trimEnds(line, size);
         if (size != 0){
             printf("%s", line);
         }
@@ -33,38 +35,43 @@ int getLine(char line[], int limit)
     }
 
     line[i] = '\0';
-    return i;
+    return i - 1;
 }
 
-int trimEnds(char line[])
+int trimEnds(char line[], int size)
 {
-    int start = NOTSTARTED, end = 0;
-    int state = OUT;
-    for (int i = 0; line[i] != '\n'; i++) {
-        int isWhitespace = line[i] == ' ' || line[i] == '\t';
-        if (state == IN && isWhitespace) {
-            state = OUT;
+    int i;
+    int start = NOTFOUND, end = NOTFOUND;
+    for (i = 0; i < size; i++) {
+        if (start == -1 && !isWhitespace(line[i])) {
+            start = i;
         }
-        else if (state == OUT && !isWhitespace) {
-            state = IN;
-            if (start == NOTSTARTED) {
-                start = i;
-            }
+        if (end == -1 && !isWhitespace(line[size - 1 - i])) {
+            end = size - 1 - i;
         }
-        else if (state == IN && !isWhitespace) {
-            end = i;
+        if (start > -1 && end > -1) {
+            break;
         }
     }
-    if (start == NOTSTARTED) {
+
+    if (start == NOTFOUND || end == NOTFOUND){
+        line[0] = '\0';
         return 0;
     }
 
-    int i;
-    for (i = 0; i < (end - start + 1); i++) {
-        line[i] = line[i + start];
-    }
-    line[i] = '\0';
+    if (start == 0 && end == size -1) return size;
 
+    for (i = 0; i < end - start + 1; i++) {
+        line[i] = line[start + i];
+    }
+
+    line[i] = '\n';
+    line[i+1] = '\0';
     return i;
+}
+
+int isWhitespace(char c)
+{
+    return c == ' ' || c == '\t';
 }
 
