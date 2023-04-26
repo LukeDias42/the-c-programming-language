@@ -13,8 +13,7 @@ int main()
     int size;
     char line[MAX_LINE];
 
-    while ((size = getLine(line, MAX_LINE)) != EOF) {
-        if (size <= 0) break;
+    while ((size = getLine(line, MAX_LINE)) > 0) {
         size = detab(line, tabSize);
     }
 
